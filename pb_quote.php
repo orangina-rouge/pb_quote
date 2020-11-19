@@ -32,7 +32,7 @@
 	        $this->version = '1.0.0';
 	        // Auteur
 	        $this->author = 'tenshy';
-	        // Indique s'il faut ou non créé une instance du module lors du chargement
+	        // Indique s'il faut ou non créer une instance du module lors du chargement
 	        // de la liste des modules de Prestashop
 	        $this->need_instance = 0;
 	        // Défini avec quelle version de Prestashop le module est compatible
@@ -55,8 +55,11 @@
 
 	        // Permet de vérifier si la variable définie plus tard dans l'administration
 	        // est définie ou non. Si ce n'est pas le cas, affiche un avertissement
-	        if (!Configuration::get('PB_QUOTE_PAGENAME')) {
-	            $this->warning = $this->l('Aucun nom fourni');
+	        if (!Configuration::get('PB_QUOTE_ROOMS')) {
+	            $this->warning = $this->l('No rooms provided');
+	        }
+	        if (!Configuration::get('PB_QUOTE_VAT')) {
+	            $this->warning = $this->l('No VATs provided');
 	        }
 	    }
 
@@ -72,13 +75,13 @@
 		    // Lance l'installation qui va :
 		    // - Installer le module en exécutant la méthode install de la classe parente
 		    // - Exécuter les 2 méthodes d'enregistrement des hooks
-		    // - Et ajouter la valeur PB_QUOTE_PAGENAME à la base de données
+		    // - Et ajouter la valeur PB_QUOTE_ROOMS à la base de données
 		    // Et récupère le résultat de toutes ces actions, si l'une d'entre elles échoue
 		    // en renvoyant 'false', cela indique que l'installation a échouée
-		    if (!parent::install() ||
-		        /*!$this->registerHook('leftColumn') ||
-		        !$this->registerHook('header') ||*/
-		        !Configuration::updateValue('PB_QUOTE_PAGENAME', 'tenshy')) 
+		    if (!parent::install()
+		        || !Configuration::updateValue('PB_QUOTE_VAT', "2:10, 1:20, 3:5.5")
+		        || !Configuration::updateValue('PB_QUOTE_ROOMS', "Divers, Salle de bain, Cuisine, Salle de bain 1, Salle de bain 2, Buanderie")
+            )
 		    {
 		        return false;
 		    }
@@ -91,10 +94,11 @@
 		{	
 			// Lance la désinstallation qui va :
 			// - Désinstaller le module en exécutant la méthode uninstall de la classe parente
-			// - Et supprimer la valeur PB_QUOTE_PAGENAME de la base de données
+			// - Et supprimer la valeur PB_QUOTE_ROOMS de la base de données
 			// Et récupère le résultat, si l'une d'entre elles renvoie 'false', l'installation a échouée
 		    if (!parent::uninstall() ||
-		        !Configuration::deleteByName('PB_QUOTE_PAGENAME')) 
+                !Configuration::deleteByName('PB_QUOTE_VAT') ||
+		        !Configuration::deleteByName('PB_QUOTE_ROOMS')) 
 		    {
 		        return false;
 		    }
@@ -109,19 +113,32 @@
 		 	
 		 	// Vérifie si le formulaire a été envoyé en fonction du nom du bouton, ici appelé btnSubmit
 		    if (Tools::isSubmit('btnSubmit')) {
-		    	// Récupère la valeur du champ PB_QUOTE_PAGENAME
-		        $pageName = strval(Tools::getValue('PB_QUOTE_PAGENAME'));
+		        $rooms = strval(Tools::getValue('PB_QUOTE_ROOMS'));
+		        $vats = strval(Tools::getValue('PB_QUOTE_VAT'));
 		 		
 		 		// Vérifie qu'il existe et qu'il ne soit pas vide
 		        if (
-		            !$pageName||
-		            empty($pageName)
+		            !$rooms||
+		            empty($rooms)
 		        ) {
 		        	// Si c'est le cas, affiche une erreur de validation
 		            $output .= $this->displayError($this->l('Invalid Configuration value'));
 		        } else {
-		        	// Sinon met à jour la valeur de PB_QUOTE_PAGENAME
-		            Configuration::updateValue('PB_QUOTE_PAGENAME', $pageName);
+		        	// Sinon met à jour la valeur de PB_QUOTE_ROOMS
+		            Configuration::updateValue('PB_QUOTE_ROOMS', $rooms);
+		            // Et notifie l'utilisateur de la modification
+		            $output .= $this->displayConfirmation($this->l('Settings updated'));
+		        }
+		        
+		        if (
+		            !$vats||
+		            empty($vats)
+		        ) {
+		        	// Si c'est le cas, affiche une erreur de validation
+		            $output .= $this->displayError($this->l('Invalid Configuration value'));
+		        } else {
+		        	// Sinon met à jour la valeur de PB_QUOTE_VAT
+		            Configuration::updateValue('PB_QUOTE_VAT', $vats);
 		            // Et notifie l'utilisateur de la modification
 		            $output .= $this->displayConfirmation($this->l('Settings updated'));
 		        }
@@ -145,8 +162,15 @@
 			        'input' => array(
 		            	array(
 			                'type' => 'text',
-			                'label' => $this->l('Configuration value'),
-			                'name' => 'PB_QUOTE_PAGENAME',
+			                'label' => $this->l('Pièces'),
+			                'name' => 'PB_QUOTE_ROOMS',
+			                'size' => 128,
+			                'required' => true
+			            ),
+			            array(
+			                'type' => 'text',
+			                'label' => $this->l('Taux Tva'),
+			                'name' => 'PB_QUOTE_VAT',
 			                'size' => 20,
 			                'required' => true
 			            )
@@ -170,38 +194,11 @@
 		    $helper->default_form_language = $defaultLang;	
 		    $helper->allow_employee_form_lang = $defaultLang;
 		 
-		    // Charge la valeur de PB_QUOTE_PAGENAME depuis la base
-		    $helper->fields_value['PB_QUOTE_PAGENAME'] = Configuration::get('PB_QUOTE_PAGENAME');
+		    // Charge la valeur de PB_QUOTE_ROOMS depuis la base
+		    $helper->fields_value['PB_QUOTE_ROOMS'] = Configuration::get('PB_QUOTE_ROOMS');
+		    $helper->fields_value['PB_QUOTE_VAT'] = Configuration::get('PB_QUOTE_VAT');
 		 	
 		 	// Génère le formulaire sur la base des informations données
 		    return $helper->generateForm(array($form));
 		}
-
-/*		// Hook utilisé pour afficher du contenu dans la colonne de gauche
-		public function hookDisplayLeftColumn($params)
-		{
-		 	// Assigne les variables smarty à utiliser dans la vue :
-		 	// - La valeur de PB_QUOTE_PAGENAME
-		 	// - Le lien à suivre
-		    $this->context->smarty->assign([
-		        'pb_quote_page_name' => Configuration::get('PB_QUOTE_PAGENAME'),
-		        'pb_quote_page_link' => $this->context->link->getModuleLink('pb_quote', 'display')
-		      ]);
-
-		    // Affiche le template pb_quote.tpl en tenant compte des variables smarty
-		    // assignée au dessus
-		    return $this->display(__FILE__, 'pb_quote.tpl');
-		}
-
-		// Hook utilisé pour afficher du contenu dans l'en-tête
-		public function hookDisplayHeader()
-		{
-			// Dans l'en-tête, ajoute la feuille de style spécifique à notre module
-			$this->context->controller->registerStylesheet(
-		        'pb_quote',
-		        $this->_path.'views/css/pb_quote.css',
-		        ['server' => 'remote', 'position' => 'head', 'priority' => 150]
-		    );
-		}
-*/
 	}
