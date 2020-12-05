@@ -22,6 +22,8 @@ class Product extends ProductCore
     const TVA = 'TVA';
     const VAT = 'vat';
     const ROOM = 'room';
+    const GROUP_ROOM = '2';
+    const GROUP_VAT = '3';
 
     public function __construct($id_product = null, $full = false, $id_lang = null, $id_shop = null, Context $context = null)
     {
@@ -184,9 +186,9 @@ class Product extends ProductCore
                 $attribute['id_product_attribute'] = self::computeIdProductAttribute($idRoom, $idVat);
 //                $attribute['id_product'] = strval($this->id);
                 $attribute['attribute_designation'] = '';
-                $attribute['attribute_designation'] .= self::ROOM . $attribute_value_separator . $room ;
+                $attribute['attribute_designation'] .= Product::ROOM . $attribute_value_separator . $room ;
                 $attribute['attribute_designation'] .= $attribute_separator;
-                $attribute['attribute_designation'] .= self::VAT . $attribute_value_separator . $vat;
+                $attribute['attribute_designation'] .= Product::VAT . $attribute_value_separator . $vat;
                 $attribute['quantity'] = 0;
                 $results[]= $attribute;
             }
@@ -227,8 +229,8 @@ class Product extends ProductCore
                 $attribute['id_product_attribute'] = $id_product_attribute;
                 $attribute['id_product'] = strval($this->id);
                 $attribute['id_shop'] = strval($this->id_shop);
-                $attribute['id_attribute_group'] = '2';
-                $attribute['group_name'] = self::ROOM;
+                $attribute['id_attribute_group'] = Product::GROUP_ROOM;
+                $attribute['group_name'] = Product::ROOM;
                 $attribute['attribute_name'] = $room;
                 $attribute['id_attribute'] = self::getIdAttributeRoom($idRoom);
                 $attribute = self::setDefaultOn($idVat, $idRoom, $attribute);
@@ -238,8 +240,8 @@ class Product extends ProductCore
                 $attribute['id_product_attribute'] = $id_product_attribute;
                 $attribute['id_product'] = strval($this->id);
                 $attribute['id_shop'] = strval($this->id_shop);
-                $attribute['id_attribute_group'] = '3';
-                $attribute['group_name'] = self::VAT;
+                $attribute['id_attribute_group'] = Product::GROUP_VAT;
+                $attribute['group_name'] = Product::VAT;
                 $attribute['attribute_name'] = $vat;
                 $attribute['id_attribute'] = self::getIdAttributeVat($idVat);
                 $attribute = self::setDefaultOn($idVat, $idRoom, $attribute);
@@ -296,12 +298,12 @@ class Product extends ProductCore
         $attribute = self::fullAttribute();
         $attribute['id_product_attribute'] = strval($id_product_attribute);
         $attribute['id_attribute'] = self::getIdAttributeRoom($idRoom);
-        $attribute['id_attribute_group'] = '2';
+        $attribute['id_attribute_group'] = Product::GROUP_ROOM;
         $attribute['id_product'] = strval($this->id);
         $attribute['id_shop'] = strval($this->id_shop);
         $attribute['attribute_name'] = $rooms[$idRoom];
-        $attribute['group_name'] = self::ROOM;
-        $attribute['public_group_name'] = self::PIECE;
+        $attribute['group_name'] = Product::ROOM;
+//        $attribute['public_group_name'] = Product::PIECE;
         $attribute['position'] = strval($idRoom);
         $attribute = self::setDefaultOn($idVat, $idRoom, $attribute);
         $res[]= $attribute;
@@ -309,13 +311,13 @@ class Product extends ProductCore
         $attribute = self::fullAttribute();
         $attribute['id_product_attribute'] = strval($id_product_attribute);
         $attribute['id_attribute'] = self::getIdAttributeVat($idVat);
-        $attribute['id_attribute_group'] = '3';
+        $attribute['id_attribute_group'] = Product::GROUP_VAT;
         $attribute['id_product'] = strval($this->id);
         $attribute['id_shop'] = strval($this->id_shop);
         $attribute['position'] = strval($idVat);
         $attribute['attribute_name'] = $vats[$idVat];
-        $attribute['group_name'] = self::VAT;
-        $attribute['public_group_name'] = self::TVA;
+        $attribute['group_name'] = Product::VAT;
+//        $attribute['public_group_name'] = Product::TVA;
         $attribute = self::setDefaultOn($idVat, $idRoom, $attribute);
         $res[]= $attribute;
 
@@ -473,8 +475,8 @@ class Product extends ProductCore
         $sql->limit($nb_products, (int) (($page_number - 1) * $nb_products));
 
         if (Combination::isFeatureActive()) {
-            $sql->select('product_attribute_shop.minimal_quantity AS product_attribute_minimal_quantity, '.__DEFAULT_IPA__.' AS id_product_attribute');
-            $sql->leftJoin('product_attribute_shop', 'product_attribute_shop', 'p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.id_shop=' . (int) $context->shop->id);
+            $sql->select('1 AS product_attribute_minimal_quantity, '.__DEFAULT_IPA__.' AS id_product_attribute');
+//            $sql->leftJoin('product_attribute_shop', 'product_attribute_shop', 'p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.id_shop=' . (int) $context->shop->id);
         }
         $sql->join(Product::sqlStock('p', null));
 
@@ -1362,10 +1364,10 @@ class Product extends ProductCore
                 $attribute['id_product'] = strval($this->id);
                 $attribute['id_shop'] = strval($this->id_shop);
                 $attribute['id_attribute'] = self::getIdAttributeRoom($idRoom);
-                $attribute['id_attribute_group'] = '2';
+                $attribute['id_attribute_group'] = Product::GROUP_ROOM;
                 $attribute['attribute_name'] = $room;
-                $attribute['group_name'] = self::ROOM;
-                $attribute['public_group_name'] = self::PIECE;
+                $attribute['group_name'] = Product::ROOM;
+                $attribute['public_group_name'] = Product::PIECE;
                 $attribute = self::setDefaultOn($idVat, $idRoom, $attribute);
 
                 $results[]= $attribute;
@@ -1379,10 +1381,10 @@ class Product extends ProductCore
                 $attribute['id_product'] = strval($this->id);
                 $attribute['id_shop'] = strval($this->id_shop);
                 $attribute['id_attribute'] = self::getIdAttributeVat($idVat);
-                $attribute['id_attribute_group'] = '3';
+                $attribute['id_attribute_group'] = Product::GROUP_VAT;
                 $attribute['attribute_name'] = $vat;
-                $attribute['group_name'] = self::VAT;
-                $attribute['public_group_name'] = self::TVA;
+                $attribute['group_name'] = Product::VAT;
+                $attribute['public_group_name'] = Product::TVA;
                 $attribute = self::setDefaultOn($idVat, $idRoom, $attribute);
 
                 $results[]= $attribute;
@@ -1901,16 +1903,16 @@ class Product extends ProductCore
 
         $attribute = self::baseAttribute();
         $attribute['id_attribute'] = self::getIdAttributeRoom($idRoom);
-        $attribute['id_attribute_group'] = '2';
+        $attribute['id_attribute_group'] = Product::GROUP_ROOM;
         $attribute['name'] = $rooms[$idRoom];
-        $attribute['group'] = self::ROOM;
+        $attribute['group'] = Product::ROOM;
         $results[]= $attribute;
 
         $attribute = self::baseAttribute();
         $attribute['id_attribute'] = self::getIdAttributeVat($idVat);
-        $attribute['id_attribute_group'] = '3';
+        $attribute['id_attribute_group'] = Product::GROUP_VAT;
         $attribute['name'] = $vats[$idVat];
-        $attribute['group'] = self::VAT;
+        $attribute['group'] = Product::VAT;
         $results[]= $attribute;
 
         $id_lang = (int) Context::getContext()->language->id;
@@ -1934,16 +1936,16 @@ class Product extends ProductCore
             foreach ($vats as $idVat => $vat) {
                 $attribute = self::baseAttribute();
                 $attribute['id_attribute'] = self::getIdAttributeRoom($idRoom);
-                $attribute['id_attribute_group'] = '2';
+                $attribute['id_attribute_group'] = Product::GROUP_ROOM;
                 $attribute['attribute'] = $room;
-                $attribute['group'] = self::ROOM;
+                $attribute['group'] = Product::ROOM;
                 $results[]= $attribute;
 
                 $attribute = self::baseAttribute();
                 $attribute['id_attribute'] = self::getIdAttributeVat($idVat);
-                $attribute['id_attribute_group'] = '3';
+                $attribute['id_attribute_group'] = Product::GROUP_VAT;
                 $attribute['attribute'] = $vat;
-                $attribute['group'] = self::VAT;
+                $attribute['group'] = Product::VAT;
                 $results[]= $attribute;
             }
 
@@ -2049,9 +2051,9 @@ class Product extends ProductCore
         $idVat = self::computeIdVat((int)$id_product_attribute);
         $idRoom = self::computeIdRoom((int)$id_product_attribute);
         $name = ' : ';
-        $name .= self::ROOM.' - '.$rooms[$idRoom];
+        $name .= Product::ROOM.' - '.$rooms[$idRoom];
         $name .= ', ';
-        $name .= self::VAT.' - '.$vats[$idVat];
+        $name .= Product::VAT.' - '.$vats[$idVat];
         return parent::getProductName($id_product, null, $id_lang) . $name;
     }
 

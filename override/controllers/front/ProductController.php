@@ -259,11 +259,11 @@ class ProductController extends ProductControllerCore
                 if ($count > 1) {
                     //find attributes of current group, having a possible combination with current selected
                     $id_attributes = array();
-                    if((int) $groupId == 3) {
+                    if((int) $groupId == (int)Product::GROUP_VAT) {
                         foreach ($vats as $idVat => $vat) {
                             $id_attributes[] = (int)Product::getIdAttributeVat($idVat);
                         }
-                    } else if ((int) $groupId == 2) {
+                    } else if ((int) $groupId == (int)Product::GROUP_ROOM) {
                         foreach ($rooms as $idRoom => $room) {
                             $id_attributes[] = (int)Product::getIdAttributeRoom($idRoom);
                         }

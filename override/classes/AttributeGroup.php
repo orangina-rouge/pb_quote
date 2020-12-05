@@ -27,12 +27,12 @@ class AttributeGroup extends AttributeGroupCore
     {
         $results = array();
 
-        if (3 == (int) $idAttributeGroup) {
+        if ((int)Product::GROUP_VAT == (int) $idAttributeGroup) {
             $vats = Product::getVats();
             foreach ($vats as $idVat => $vat) {
                 $attribute = array();
                 $attribute['id_attribute'] = Product::getIdAttributeVat($idVat);
-                $attribute['id_attribute_group'] = '3';
+                $attribute['id_attribute_group'] = Product::GROUP_VAT;
                 $attribute['name'] = $vat;
                 $attribute['position'] = strval($idVat);
                 $attribute['color'] = '';
@@ -40,12 +40,12 @@ class AttributeGroup extends AttributeGroupCore
 
                 $results[]= $attribute;
             }
-        } elseif (2 == (int) $idAttributeGroup) {
+        } elseif ((int)Product::GROUP_ROOM == (int) $idAttributeGroup) {
             $rooms = Product::getRooms();
             foreach ($rooms as $idRoom => $room) {
                 $attribute = array();
                 $attribute['id_attribute'] = Product::getIdAttributeRoom($idRoom);
-                $attribute['id_attribute_group'] = '2';
+                $attribute['id_attribute_group'] = Product::GROUP_ROOM;
                 $attribute['name'] = $room;
                 $attribute['position'] = strval($idRoom);
                 $attribute['color'] = '';
@@ -69,8 +69,9 @@ class AttributeGroup extends AttributeGroupCore
         $results = array();
 
         $attribute = array();
-        $attribute['id_attribute_group'] = '3';
+        $attribute['id_attribute_group'] = Product::GROUP_VAT;
         $attribute['name'] = Product::VAT;
+        $attribute['public_name'] = Product::TVA;
         $attribute['position'] = strval(1);
         $attribute['group_type'] = 'select';
         $attribute['is_color_group'] = '0';
@@ -79,8 +80,9 @@ class AttributeGroup extends AttributeGroupCore
         $results[]= $attribute;
 
         $attribute = array();
-        $attribute['id_attribute_group'] = '2';
+        $attribute['id_attribute_group'] = Product::GROUP_ROOM;
         $attribute['name'] = Product::ROOM;
+        $attribute['public_name'] = Product::PIECE;
         $attribute['position'] = strval(0);
         $attribute['group_type'] = 'select';
         $attribute['is_color_group'] = '0';

@@ -46,21 +46,25 @@ class Attribute extends AttributeCore
             foreach ($vats as $idVat => $vat) {
                 $attribute = Product::baseAttribute();
                 $attribute['id_attribute'] = Product::getIdAttributeVat($idVat);
-                $attribute['id_attribute_group'] = '1';
+                $attribute['id_attribute_group'] = Product::GROUP_VAT;
                 $attribute['name'] = $vat;
                 $attribute['attribute_group'] = Product::VAT;
+                $attribute['public_name'] = Product::TVA;
                 $attribute['position'] = strval($idVat);
                 $attribute['group_type'] = 'select';
+                $attribute['id_lang'] = $idLang;
 
                 $results[]= $attribute;
 
                 $attribute = Product::baseAttribute();
                 $attribute['id_attribute'] = Product::getIdAttributeRoom($idRoom);
-                $attribute['id_attribute_group'] = '2';
+                $attribute['id_attribute_group'] = Product::GROUP_ROOM;
                 $attribute['name'] = $room;
                 $attribute['attribute_group'] = Product::ROOM;
+                $attribute['public_name'] = Product::PIECE;
                 $attribute['position'] = strval($idRoom);
                 $attribute['group_type'] = 'select';
+                $attribute['id_lang'] = $idLang;
 
                 $results[]= $attribute;
             }
@@ -80,9 +84,9 @@ class Attribute extends AttributeCore
      */
     public static function isAttribute($idAttributeGroup, $name, $idLang)
     {
-        if (3 == (int) $idAttributeGroup) {
+        if ((int)Product::GROUP_VAT == (int) $idAttributeGroup) {
             $names = Product::getVats();
-        } elseif (2 == (int) $idAttributeGroup) {
+        } elseif ((int)Product::GROUP_ROOM == (int) $idAttributeGroup) {
             $names = Product::getRooms();
         }
         if(in_array($name, $names)) {
@@ -141,9 +145,9 @@ class Attribute extends AttributeCore
      */
     public static function getHigherPosition($idAttributeGroup)
     {
-        if (3 == (int) $idAttributeGroup) {
+        if ((int)Product::GROUP_VAT == (int) $idAttributeGroup) {
             $names = Product::getVats();
-        } elseif (2 == (int) $idAttributeGroup) {
+        } elseif ((int)Product::GROUP_ROOM == (int) $idAttributeGroup) {
             $names = Product::getRooms();
         }
         return sizeof($names) - 1;

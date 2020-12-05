@@ -130,7 +130,7 @@ class HTMLTemplateInvoice extends HTMLTemplateInvoiceCore
      */
     public function getContent()
     {
-        $needle = " - Pièce :";
+        $needle = Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR');
         $invoiceAddressPatternRules = json_decode(Configuration::get('PS_INVCE_INVOICE_ADDR_RULES'), true);
         $deliveryAddressPatternRules = json_decode(Configuration::get('PS_INVCE_DELIVERY_ADDR_RULES'), true);
 
@@ -200,12 +200,20 @@ class HTMLTemplateInvoice extends HTMLTemplateInvoiceCore
 //             }
 
             $productName = $order_detail['product_name'];
-            
-            $index = strrpos($productName, $needle);
-            if($index !== false) {
-                $room = substr($productName, $index+strlen($needle), strlen($productName));
-                $order_detail['product_name'] = substr($productName, 0, $index);
+
+            for($x = 0 ; $x < 2; $x++) {
+                $index = strrpos($productName, $needle);
+                if ($index !== false) {
+                    $attr = substr($productName, $index + strlen($needle), strlen($productName));
+                    PrestaShopLogger::addLog(__METHOD__." ".var_export($attr, true));
+                    $productName = substr($productName, 0, $index);
+                    $split = explode(' : ', $attr);
+                    if(trim($split[0]) == Product::PIECE) {
+                        $room = trim($split[1]);
+                    }
+                }
             }
+            $order_detail['product_name'] = $productName;
 
 //             PrestaShopLogger::addLog("Found room '$room'");
             if(!isset($order_details_per_room[$room])) {

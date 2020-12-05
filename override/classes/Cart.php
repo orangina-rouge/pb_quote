@@ -779,13 +779,13 @@ class Cart extends CartCore
                     $attribute = Product::baseAttributeGroups();;
                     $attribute['id_product_attribute'] = $idProductAttribute;
                     $attribute['attribute_name'] = $room;
-                    $attribute['public_name'] = Product::PIECE;
+                    $attribute['public_group_name'] = Product::PIECE;
                     $results[] = $attribute;
 
                     $attribute = Product::baseAttributeGroups();
                     $attribute['id_product_attribute'] = $idProductAttribute;
                     $attribute['attribute_name'] = $vat;
-                    $attribute['public_name'] = Product::TVA;
+                    $attribute['public_group_name'] = Product::TVA;
                     $results[]= $attribute;
 
                 }
