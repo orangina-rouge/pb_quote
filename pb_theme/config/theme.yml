@@ -1,0 +1,6 @@
+parent: classic
+name: pb_theme
+display_name: Point-barre's theme
+version: 1.0.0
+assets:
+  use_parent_assets: true
