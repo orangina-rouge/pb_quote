@@ -1,0 +1,32 @@
+/*
+ * Custom code goes here.
+ * A template should always ship with an empty custom.css
+ */
+#products .thumbnail-container, .featured-products .thumbnail-container, .product-accessories .thumbnail-container, .product-miniature .thumbnail-container {
+ position: relative;
+ margin-bottom: 1.563rem;
+ height: 120px;
+ width: 250px;
+ background: #fff;
+ box-shadow: 2px 2px 8px 0 rgba(0,0,0,.2);
+}
+
+#products .product-description, .featured-products .product-description, .product-accessories .product-description, .product-miniature .product-description {
+ position: absolute;
+ z-index: 3;
+ background: #fff;
+ width: 250px;
+ bottom: 0;
+ height: 120px;
+}
+
+#products .product-price-and-shipping, .featured-products .product-price-and-shipping, .product-accessories .product-price-and-shipping, .product-miniature .product-price-and-shipping {
+ position: absolute;
+ bottom: 0;
+ /*right: 5px;*/
+ width: 250px;
+ height: 22px;
+ color: #232323;
+ font-weight: 700;
+ text-align: center;
+}
