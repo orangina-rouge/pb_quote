@@ -1050,7 +1050,7 @@ class Product extends ProductCore
 
         // Customization price
         if ((int) $id_customization) {
-            $price += Tools::convertPrice(Customization::getCustomizationPrice($id_customization), $id_currency);
+            $price = Tools::convertPrice(Product::getCustomizationPrice($id_customization), $id_currency);
         }
 
         // Tax
@@ -1148,6 +1148,52 @@ class Product extends ProductCore
         self::$_prices[$cache_id] = $price;
 //        PrestaShopLogger::addLog(__METHOD__." returns (end) ".var_export(self::$_prices[$cache_id], true));
         return self::$_prices[$cache_id];
+    }
+
+    /**
+     * Get price of Customization.
+     *
+     * @param int $idCustomization Customization ID
+     *
+     * @return float|int Price of customization
+     */
+    public static function getCustomizationPrice($idCustomization)
+    {
+        if (!(int) $idCustomization) {
+            return 0;
+        }
+
+        $price = (float) Db::getInstance()->getValue(
+            '
+            SELECT cd.`value` FROM `' . _DB_PREFIX_ . 'customized_data` cd
+            JOIN `' . _DB_PREFIX_ . 'customization_field_lang` cfl on cd.`index` = cfl.`id_customization_field`
+            WHERE cd.`id_customization` = ' . (int) $idCustomization . ' AND cfl.`name` = "Prix HT"'
+        );
+        PrestaShopLogger::addLog(__METHOD__." returns $price");
+        return $price;
+    }
+
+    /**
+     * Get price of Customization.
+     *
+     * @param int $idCustomization Customization ID
+     *
+     * @return float|int Price of customization
+     */
+    public static function getCustomizationLibelle($idCustomization)
+    {
+        if (!(int) $idCustomization) {
+            return false;
+        }
+
+        $libelle = Db::getInstance()->getValue(
+            '
+            SELECT cd.`value` FROM `' . _DB_PREFIX_ . 'customized_data` cd
+            JOIN `' . _DB_PREFIX_ . 'customization_field_lang` cfl on cd.`index` = cfl.`id_customization_field`
+            WHERE cd.`id_customization` = ' . (int) $idCustomization . ' AND cfl.`name` = "Libellé"'
+        );
+        PrestaShopLogger::addLog(__METHOD__." returns $libelle");
+        return $libelle;
     }
 
     /**

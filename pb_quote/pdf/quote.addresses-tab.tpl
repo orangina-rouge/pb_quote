@@ -17,7 +17,7 @@
  *}
 <table id="addresses-tab" cellspacing="0" cellpadding="0">
 	<tr>
-		<td width="50%">{if $delivery_address}<span class="bold">{l s='Delivery Address' d='Shop.Pdf' pdf='true'}</span><br/><br/>
+		<td width="50%">{if $delivery_address}<span class="bold">{l s='Adresse des travaux' d='Shop.Pdf' pdf='true'}</span><br/><br/>
 				{$delivery_address}
 			{/if}
 		</td>

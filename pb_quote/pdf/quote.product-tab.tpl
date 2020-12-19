@@ -101,51 +101,6 @@
                     {displayPrice currency=$order->id_currency price=$order_detail.total_price_tax_excl_including_ecotax}
                 </td>
             </tr>
-
-            {foreach $order_detail.customizedDatas as $customizationPerAddress}
-                {foreach $customizationPerAddress as $customizationId => $customization}
-                    <tr class="customization_data {$bgcolor_class}">
-                        <td class="center"> &nbsp;</td>
-
-                        <td>
-                            {if isset($customization.datas[$smarty.const._CUSTOMIZE_TEXTFIELD_]) && count($customization.datas[$smarty.const._CUSTOMIZE_TEXTFIELD_]) > 0}
-                                <table style="width: 100%;">
-                                    {foreach $customization.datas[$smarty.const._CUSTOMIZE_TEXTFIELD_] as $customization_infos}
-                                        <tr>
-                                            <td style="width: 30%;">
-                                                {$customization_infos.name|string_format:{l s='%s:' d='Shop.Pdf' pdf='true'}}
-                                            </td>
-                                            <td>{if (int)$customization_infos.id_module}{$customization_infos.value nofilter}{else}{$customization_infos.value}{/if}</td>
-                                        </tr>
-                                    {/foreach}
-                                </table>
-                            {/if}
-
-                            {if isset($customization.datas[$smarty.const._CUSTOMIZE_FILE_]) && count($customization.datas[$smarty.const._CUSTOMIZE_FILE_]) > 0}
-                                <table style="width: 100%;">
-                                    <tr>
-                                        <td style="width: 70%;">{l s='image(s):' d='Shop.Pdf' pdf='true'}</td>
-                                        <td>{count($customization.datas[$smarty.const._CUSTOMIZE_FILE_])}</td>
-                                    </tr>
-                                </table>
-                            {/if}
-                        </td>
-
-                        <td class="center">
-                            ({if $customization.quantity == 0}1{else}{$customization.quantity}{/if})
-                        </td>
-
-                        {assign var=end value=($layout._colCount-3)}
-                        {for $var=0 to $end}
-                            <td class="center">
-                                --
-                            </td>
-                        {/for}
-
-                    </tr>
-                    <!--if !$smarty.foreach.custo_foreach.last-->
-                {/foreach}
-            {/foreach}
         {/foreach}
 	{/foreach}
 	<!-- END PRODUCTS -->

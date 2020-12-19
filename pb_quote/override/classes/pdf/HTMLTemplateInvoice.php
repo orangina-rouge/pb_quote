@@ -59,7 +59,8 @@ class HTMLTemplateInvoice extends HTMLTemplateInvoiceCore
     public function getHeader()
     {
         $this->assignCommonHeaderData();
-        $this->smarty->assign(array('header' => Context::getContext()->getTranslator()->trans('Devis', array(), 'Shop.Pdf')));
+        $carrier = new Carrier((int) $this->order->id_carrier);
+        $this->smarty->assign(array('carrier' => $carrier));
 
         return $this->smarty->fetch($this->getTemplate('quote.header'));
     }
