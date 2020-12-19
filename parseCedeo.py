@@ -19,13 +19,13 @@ def getCategory(r):
     #if row['libellé de la nomenclature']:
         #category.append(row['libellé de la nomenclature'])
     if row['libellé de la sous famille de base']:
-        category.append(row['libellé de la sous famille de base'])
+        category.append(row['libellé de la sous famille de base'].replace('/', '-').replace(',', '-'))
     if row['libellé de la sous famille']:
-        category.append(row['libellé de la sous famille'])
+        category.append(row['libellé de la sous famille'].replace('/', '-').replace(',', '-'))
     if row['libellé de la famille']:
-        category.append(row['libellé de la famille'])
+        category.append(row['libellé de la famille'].replace('/', '-').replace(',', '-'))
     if row['libellé de la spécialité']:
-        category.append(row['libellé de la spécialité'])
+        category.append(row['libellé de la spécialité'].replace('/', '-').replace(',', '-'))
     return ','.join(category)
     
 def toMonetary(number, digits=2):
@@ -68,7 +68,7 @@ inputfile = sys.argv[1]
 try:
     opts, args = getopt.getopt(sys.argv[2:],"hm:b:a:s:",["marge=","boutique=","arrondi=","batchsize=","max=", "offset="])
 except getopt.GetoptError:
-    print('parseCedeo <inputfile> [-m <marge>] [-b <boutique>] [-a <arrondi>] [-s <batchsize>]')
+    print('parseCedeo.py <inputfile> [-m <marge>] [-b <boutique>] [-a <arrondi>] [-s <batchsize>]')
     print('boutique par défaut: '+shop)
     print('marge par défaut: '+str(margin))
     print('arrondi par défaut: '+str(arrondi))
@@ -76,7 +76,7 @@ except getopt.GetoptError:
     sys.exit(2)
 for opt, arg in opts:
     if opt == '-h':
-        print('parseCedeo <inputfile> [-m <marge>] [-b <boutique>] [-a <arrondi>] [-s <batchsize>]')
+        print('parseCedeo.py <inputfile> [-m <marge>] [-b <boutique>] [-a <arrondi>] [-s <batchsize>]')
         print('boutique par défaut: '+shop)
         print('marge par défaut: '+str(margin))
         print('arrondi par défaut: '+str(arrondi))
@@ -143,7 +143,7 @@ with open(inputfile, newline='', encoding='iso-8859-1') as fin:
                 continue
             if row['libellé de la spécialité']:
                 categories.append({
-                    'Nom': row['libellé de la spécialité'],
+                    'Nom': row['libellé de la spécialité'].replace('/', '-').replace(',', '-'),
                     'Actif': 1,
                     'Racine': 0, 
                     'Parent': 'Catégories', 
@@ -151,26 +151,26 @@ with open(inputfile, newline='', encoding='iso-8859-1') as fin:
                 if row['libellé de la famille']:
                     if row['libellé de la famille'] != row['libellé de la spécialité']:
                         categories.append({
-                            'Nom': row['libellé de la famille'],
+                            'Nom': row['libellé de la famille'].replace('/', '-').replace(',', '-'),
                             'Actif': 1,
                             'Racine': 0,
-                            'Parent': row['libellé de la spécialité'], 
+                            'Parent': row['libellé de la spécialité'].replace('/', '-').replace(',', '-'), 
                             'Boutique': shop})
                     if row['libellé de la sous famille'] :
                         if row['libellé de la famille'] != row['libellé de la sous famille']:
                             categories.append({
-                                'Nom': row['libellé de la sous famille'],
+                                'Nom': row['libellé de la sous famille'].replace('/', '-').replace(',', '-'),
                                 'Actif': 1,
                                 'Racine': 0,
-                                'Parent': row['libellé de la famille'], 
+                                'Parent': row['libellé de la famille'].replace('/', '-').replace(',', '-'), 
                                 'Boutique': shop})
                         if row['libellé de la sous famille de base']:
                             if row['libellé de la sous famille de base'] != row['libellé de la sous famille']:
                                 categories.append({
-                                    'Nom': row['libellé de la sous famille de base'],
+                                    'Nom': row['libellé de la sous famille de base'].replace('/', '-').replace(',', '-'),
                                     'Actif': 1,
                                     'Racine': 0,
-                                    'Parent': row['libellé de la sous famille'], 
+                                    'Parent': row['libellé de la sous famille'].replace('/', '-').replace(',', '-'), 
                                     'Boutique': shop})
                             #if row['libellé de la nomenclature']:
                                 #if row['libellé de la sous famille de base'] != row['libellé de la nomenclature']:
