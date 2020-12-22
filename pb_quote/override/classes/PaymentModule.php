@@ -1,6 +1,6 @@
 <?php
 /**
- * 2007-2019 PrestaShop and Contributors
+ * 2020 point-barre.com
  *
  * NOTICE OF LICENSE
  *
@@ -8,23 +8,11 @@
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
  * https://opensource.org/licenses/OSL-3.0
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to license@prestashop.com so we can send you a copy immediately.
  *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade PrestaShop to newer
- * versions in the future. If you wish to customize PrestaShop for your
- * needs please refer to https://www.prestashop.com for more information.
- *
- * @author    PrestaShop SA <contact@prestashop.com>
- * @copyright 2007-2019 PrestaShop SA and Contributors
+ * @author    tenshy
+ * @copyright 2020 point-barre.com
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
- * International Registered Trademark & Property of PrestaShop SA
  */
-use PrestaShop\PrestaShop\Adapter\StockManager;
-
 abstract class PaymentModule extends PaymentModuleCore
 {
      /**
@@ -511,7 +499,7 @@ abstract class PaymentModule extends PaymentModuleCore
                                 ),
                                 $data,
                                 $this->context->customer->email,
-                                $this->context->customer->firstname . ' ' . $this->context->customer->lastname,
+                                $invoice->firstname . ' ' . $invoice->lastname,
                                 null,
                                 null,
                                 $file_attachement,
@@ -521,6 +509,58 @@ abstract class PaymentModule extends PaymentModuleCore
                                 (int) $order->id_shop
                             );
                         }
+
+                        if (Validate::isEmail($invoice->email)) {
+                            Mail::Send(
+                                (int) $order->id_lang,
+                                'order_conf',
+                                Context::getContext()->getTranslator()->trans(
+                                    'Order confirmation',
+                                    array(),
+                                    'Emails.Subject',
+                                    $orderLanguage->locale
+                                ),
+                                $data,
+                                $invoice->email,
+                                $invoice->firstname . ' ' . $invoice->lastname,
+                                null,
+                                null,
+                                $file_attachement,
+                                null,
+                                _PS_MAIL_DIR_,
+                                false,
+                                (int) $order->id_shop,
+                                null,
+                                $this->context->customer->email,
+                                $this->context->customer->company
+                            );
+                        }
+
+//                        if (Validate::isEmail($delivery->email) && $delivery->email != $invoice->email) {
+//                            Mail::Send(
+//                                (int) $order->id_lang,
+//                                'order_conf',
+//                                Context::getContext()->getTranslator()->trans(
+//                                    'Order confirmation',
+//                                    array(),
+//                                    'Emails.Subject',
+//                                    $orderLanguage->locale
+//                                ),
+//                                $data,
+//                                $delivery->email,
+//                                $invoice->firstname . ' ' . $invoice->lastname,
+//                                null,
+//                                null,
+//                                $file_attachement,
+//                                null,
+//                                _PS_MAIL_DIR_,
+//                                false,
+//                                (int) $order->id_shop,
+//                                null,
+//                                $this->context->customer->email,
+//                                $this->context->customer->company
+//                            );
+//                        }
                     }
 
                     // updates stock in shops
@@ -568,40 +608,4 @@ abstract class PaymentModule extends PaymentModuleCore
             die(Tools::displayError($error));
         }
     }
-
-//    /**
-//     * Fetch the content of $template_name inside the folder
-//     * current_theme/mails/current_iso_lang/ if found, otherwise in
-//     * mails/current_iso_lang.
-//     *
-//     * @param string $template_name template name with extension
-//     * @param int $mail_type Mail::TYPE_HTML or Mail::TYPE_TEXT
-//     * @param array $var sent to smarty as 'list'
-//     *
-//     * @return string
-//     */
-//    protected function getEmailTemplateContent($template_name, $mail_type, $var)
-//    {
-//        $email_configuration = Configuration::get('PS_MAIL_TYPE');
-//        if ($email_configuration != $mail_type && $email_configuration != Mail::TYPE_BOTH) {
-//            return '';
-//        }
-//
-//        $pathToFindEmail = array(
-//            _PS_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . $this->context->language->iso_code . DIRECTORY_SEPARATOR . $template_name,
-//            _PS_THEME_DIR_ . 'mails' . DIRECTORY_SEPARATOR . 'en' . DIRECTORY_SEPARATOR . $template_name,
-//            _PS_MAIL_DIR_ . $this->context->language->iso_code . DIRECTORY_SEPARATOR . $template_name,
-//            _PS_MAIL_DIR_ . 'en' . DIRECTORY_SEPARATOR . $template_name,
-//        );
-//
-//        foreach ($pathToFindEmail as $path) {
-//            if (Tools::file_exists_cache($path)) {
-//                $this->context->smarty->assign('list', $var);
-//
-//                return $this->context->smarty->fetch($path);
-//            }
-//        }
-//
-//        return '';
-//    }
 }
