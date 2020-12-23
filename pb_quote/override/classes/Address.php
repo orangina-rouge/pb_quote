@@ -24,6 +24,8 @@ class Address extends AddressCore
     // when you override this class, do not create a field with allow_null=>true
     // because it will give you exception on checkout address step
     public static $definition = array(
+        'table' => 'address',
+        'primary' => 'id_address',
         'fields' => array(
             'id_customer' => array('type' => self::TYPE_INT, 'validate' => 'isNullOrUnsignedId', 'copy_post' => false),
             'id_manufacturer' => array('type' => self::TYPE_INT, 'validate' => 'isNullOrUnsignedId', 'copy_post' => false),
@@ -47,7 +49,7 @@ class Address extends AddressCore
             'deleted' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool', 'copy_post' => false),
             'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDate', 'copy_post' => false),
             'date_upd' => array('type' => self::TYPE_DATE, 'validate' => 'isDate', 'copy_post' => false),
-            'email' => array('type' => self::TYPE_STRING, 'validate' => 'isEmail', 'required' => true, 'size' => 255),
+            'email' => array('type' => self::TYPE_STRING, 'validate' => 'isEmail', 'size' => 255),
         ),
     );
 }

@@ -487,29 +487,6 @@ abstract class PaymentModule extends PaymentModuleCore
 
                         $orderLanguage = new Language((int) $order->id_lang);
 
-                        if (Validate::isEmail($this->context->customer->email)) {
-                            Mail::Send(
-                                (int) $order->id_lang,
-                                'order_conf',
-                                Context::getContext()->getTranslator()->trans(
-                                    'Order confirmation',
-                                    array(),
-                                    'Emails.Subject',
-                                    $orderLanguage->locale
-                                ),
-                                $data,
-                                $this->context->customer->email,
-                                $invoice->firstname . ' ' . $invoice->lastname,
-                                null,
-                                null,
-                                $file_attachement,
-                                null,
-                                _PS_MAIL_DIR_,
-                                false,
-                                (int) $order->id_shop
-                            );
-                        }
-
                         if (Validate::isEmail($invoice->email)) {
                             Mail::Send(
                                 (int) $order->id_lang,
@@ -530,37 +507,11 @@ abstract class PaymentModule extends PaymentModuleCore
                                 _PS_MAIL_DIR_,
                                 false,
                                 (int) $order->id_shop,
-                                null,
+                                $this->context->customer->email,
                                 $this->context->customer->email,
                                 $this->context->customer->company
                             );
                         }
-
-//                        if (Validate::isEmail($delivery->email) && $delivery->email != $invoice->email) {
-//                            Mail::Send(
-//                                (int) $order->id_lang,
-//                                'order_conf',
-//                                Context::getContext()->getTranslator()->trans(
-//                                    'Order confirmation',
-//                                    array(),
-//                                    'Emails.Subject',
-//                                    $orderLanguage->locale
-//                                ),
-//                                $data,
-//                                $delivery->email,
-//                                $invoice->firstname . ' ' . $invoice->lastname,
-//                                null,
-//                                null,
-//                                $file_attachement,
-//                                null,
-//                                _PS_MAIL_DIR_,
-//                                false,
-//                                (int) $order->id_shop,
-//                                null,
-//                                $this->context->customer->email,
-//                                $this->context->customer->company
-//                            );
-//                        }
                     }
 
                     // updates stock in shops
