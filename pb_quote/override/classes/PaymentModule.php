@@ -487,7 +487,16 @@ abstract class PaymentModule extends PaymentModuleCore
 
                         $orderLanguage = new Language((int) $order->id_lang);
 
-                        if (Validate::isEmail($invoice->email)) {
+                        $to = array($this->context->customer->email);
+                        if (Validate::isEmail($invoice->other)) {
+                            $to[] = $invoice->other;
+                        }
+                        if (Validate::isEmail($delivery->other)
+                            && $invoice->other != $delivery->other) {
+                            $to[] = $delivery->other;
+                        }
+
+                        if (Validate::isEmail($this->context->customer->email)) {
                             Mail::Send(
                                 (int) $order->id_lang,
                                 'order_conf',
@@ -498,7 +507,7 @@ abstract class PaymentModule extends PaymentModuleCore
                                     $orderLanguage->locale
                                 ),
                                 $data,
-                                $invoice->email,
+                                $to,
                                 $invoice->firstname . ' ' . $invoice->lastname,
                                 null,
                                 null,
@@ -507,7 +516,7 @@ abstract class PaymentModule extends PaymentModuleCore
                                 _PS_MAIL_DIR_,
                                 false,
                                 (int) $order->id_shop,
-                                $this->context->customer->email,
+                                null,
                                 $this->context->customer->email,
                                 $this->context->customer->company
                             );
