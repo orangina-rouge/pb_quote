@@ -49,7 +49,7 @@ class Address extends AddressCore
             'deleted' => array('type' => self::TYPE_BOOL, 'validate' => 'isBool', 'copy_post' => false),
             'date_add' => array('type' => self::TYPE_DATE, 'validate' => 'isDate', 'copy_post' => false),
             'date_upd' => array('type' => self::TYPE_DATE, 'validate' => 'isDate', 'copy_post' => false),
-            'email' => array('type' => self::TYPE_STRING, 'validate' => 'isEmail', 'size' => 255),
+            'email' => array('type' => self::TYPE_STRING, 'validate' => 'isEmail', size' => 255),
         ),
     );
 }
