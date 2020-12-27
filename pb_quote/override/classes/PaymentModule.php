@@ -13,6 +13,8 @@
  * @copyright 2020 point-barre.com
  * @license   https://opensource.org/licenses/OSL-3.0 Open Software License (OSL 3.0)
  */
+use PrestaShop\PrestaShop\Adapter\StockManager;
+
 abstract class PaymentModule extends PaymentModuleCore
 {
      /**

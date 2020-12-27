@@ -474,10 +474,8 @@ class Product extends ProductCore
         $sql->orderBy((isset($order_by_prefix) ? pSQL($order_by_prefix) . '.' : '') . '`' . pSQL($order_by) . '` ' . pSQL($order_way));
         $sql->limit($nb_products, (int) (($page_number - 1) * $nb_products));
 
-        if (Combination::isFeatureActive()) {
-            $sql->select('1 AS product_attribute_minimal_quantity, '.__DEFAULT_IPA__.' AS id_product_attribute');
-//            $sql->leftJoin('product_attribute_shop', 'product_attribute_shop', 'p.`id_product` = product_attribute_shop.`id_product` AND product_attribute_shop.`default_on` = 1 AND product_attribute_shop.id_shop=' . (int) $context->shop->id);
-        }
+        $sql->select('1 AS product_attribute_minimal_quantity, '.__DEFAULT_IPA__.' AS id_product_attribute');
+
         $sql->join(Product::sqlStock('p', null));
 
         $result = Db::getInstance(_PS_USE_SQL_SLAVE_)->executeS($sql);

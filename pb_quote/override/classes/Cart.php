@@ -122,30 +122,23 @@ class Cart extends CartCore
             $sql->select('NULL AS customization_quantity, NULL AS id_customization');
         }
 
-        if (Combination::isFeatureActive()) {
-            $sql->select('
-                0 AS price_attribute, 0 AS ecotax_attr,
-                p.`reference` AS reference,
-                p.`weight` AS weight_attribute,
-                p.`ean13` AS ean13,
-                p.`isbn` AS isbn,
-                p.`upc` AS upc,
-                product_shop.`minimal_quantity` AS minimal_quantity,
-                product_shop.`wholesale_price` AS wholesale_price
-            ');
-
-        } else {
-            $sql->select(
-                'p.`reference` AS reference, p.`ean13`, p.`isbn`,
-                p.`upc` AS upc, product_shop.`minimal_quantity` AS minimal_quantity, product_shop.`wholesale_price` wholesale_price'
-            );
-        }
+        $sql->select('
+            0 AS price_attribute, 0 AS ecotax_attr,
+            p.`reference` AS reference,
+            p.`weight` AS weight_attribute,
+            p.`ean13` AS ean13,
+            p.`isbn` AS isbn,
+            p.`upc` AS upc,
+            product_shop.`minimal_quantity` AS minimal_quantity,
+            product_shop.`wholesale_price` AS wholesale_price
+        ');
 
         $sql->select('image_shop.`id_image` id_image, il.`legend`');
         $sql->leftJoin('image_shop', 'image_shop', 'image_shop.`id_product` = p.`id_product` AND image_shop.cover=1 AND image_shop.id_shop=' . (int) $this->id_shop);
         $sql->leftJoin('image_lang', 'il', 'il.`id_image` = image_shop.`id_image` AND il.`id_lang` = ' . (int) $this->id_lang);
 
         $result = Db::getInstance()->executeS($sql);
+        PrestaShopLogger::addLog(__METHOD__." ".var_export($result, true));
 
         // Reset the cache before the following return, or else an empty cart will add dozens of queries
         $products_ids = array();
@@ -750,10 +743,6 @@ class Cart extends CartCore
 
     public static function cacheSomeAttributesLists($ipa_list, $id_lang)
     {
-        if (!Combination::isFeatureActive()) {
-            return;
-        }
-
         $pa_implode = array();
         $separator = Configuration::get('PS_ATTRIBUTE_ANCHOR_SEPARATOR');
 
